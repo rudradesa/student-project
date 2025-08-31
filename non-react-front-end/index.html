@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Habit Tracker</title>
+</head>
+<body>
+  <h1>Habit Tracker</h1>
+
+  <input id="habitName" placeholder="Enter new habit">
+  <button id="addBtn">Add Habit</button>
+
+  <h2>Habits</h2>
+  <ul id="habitList"></ul>
+
+  <script>
+    const habitList = document.getElementById("habitList");
+    const addBtn = document.getElementById("addBtn");
+    const habitName = document.getElementById("habitName");
+
+   
+    async function loadHabits() {
+      const habits = await window.habitAPI.getHabits();
+      habitList.innerHTML = "";
+      habits.forEach(habit => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${habit.name} 
+          <button onclick="window.habitAPI.logHabit(${habit.id}, 'completed')">completed</button>
+          <button onclick="window.habitAPI.logHabit(${habit.id}, 'missed')">missed</button>
+        `;
+        habitList.appendChild(li);
+      });
+    }
+
+    
+    addBtn.onclick = async () => {
+      if (habitName.value.trim()) {
+        await window.habitAPI.addHabit(habitName.value.trim());
+        habitName.value = "";
+        loadHabits();
+      }
+    };
+
+    
+    loadHabits();
+  </script>
+</body>
+</html>
